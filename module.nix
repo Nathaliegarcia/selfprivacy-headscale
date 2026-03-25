@@ -134,7 +134,7 @@ in
 
     security.acme = {
       acceptTerms = true;
-      defaults.email = "admin@${sp.domain}";
+      defaults.email = "hass@${sp.domain}";
     };
 
     networking.firewall.allowedTCPPorts = [ 80 443 ];
