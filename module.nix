@@ -84,7 +84,7 @@ in
 
       settings = {
         server_url = "https://${fqdn}";
-        listen_addr = "127.0.0.1:8080";
+        listen_addr = "127.0.0.1:8098";
         metrics_listen_addr = "127.0.0.1:9090";
 
         tls_cert_path = null;
@@ -121,7 +121,7 @@ in
         forceSSL = true;
 
         locations."/" = {
-          proxyPass = "http://127.0.0.1:8080";
+          proxyPass = "http://127.0.0.1:8098";
           proxyWebsockets = true;
           extraConfig = ''
             proxy_set_header Host $host;
