@@ -44,7 +44,7 @@ in
 
     baseDomain = (lib.mkOption {
       type = lib.types.str;
-      default = "tail.${sp.domain}";
+      default = "tail.vpn";
       description = "MagicDNS base domain used by Headscale";
     }) // {
       meta = {
