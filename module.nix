@@ -30,7 +30,7 @@ in
     };
 
     subdomain = (lib.mkOption {
-      default = "vpn";
+      default = "headscale";
       type = lib.types.strMatching "[A-Za-z0-9][A-Za-z0-9\\-]{0,61}[A-Za-z0-9]";
       description = "Subdomain for Headscale";
     }) // {
