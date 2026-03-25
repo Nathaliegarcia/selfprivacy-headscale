@@ -96,6 +96,7 @@ in
         };
 
         dns = {
+          override_local_dns = false;
           base_domain = cfg.baseDomain;
           magic_dns = true;
         };
