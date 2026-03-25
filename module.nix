@@ -87,8 +87,8 @@ in
         listen_addr = "127.0.0.1:8080";
         metrics_listen_addr = "127.0.0.1:9090";
 
-        tls_cert_path = "";
-        tls_key_path = "";
+        tls_cert_path = null;
+        tls_key_path = null;
 
         log = {
           format = "text";
