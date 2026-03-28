@@ -4,7 +4,6 @@ let
   sp = config.selfprivacy;
   cfg = sp.modules.headscale;
 
-  fqdn = "${cfg.subdomain}.${sp.domain}";
   dataDir = "/var/lib/headscale";
 in
 {
@@ -83,7 +82,7 @@ in
       enable = true;
 
       settings = {
-        server_url = "https://${fqdn}";
+        server_url = "https://${cfg.subdomain}.${sp.domain}";
         listen_addr = "127.0.0.1:8098";
         metrics_listen_addr = "127.0.0.1:9090";
 
@@ -116,7 +115,7 @@ in
     services.nginx = {
       enable = true;
 
-      virtualHosts.${fqdn} = {
+      virtualHosts."${cfg.subdomain}.${sp.domain}" = {
         useACMEHost = sp.domain;
         forceSSL = true;
 
