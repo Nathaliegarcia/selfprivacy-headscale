@@ -117,7 +117,7 @@ in
       enable = true;
 
       virtualHosts.${fqdn} = {
-        enableACME = true;
+        useACMEHost = sp.domain;
         forceSSL = true;
 
         locations."/" = {
@@ -129,11 +129,6 @@ in
           '';
         };
       };
-    };
-
-    security.acme = {
-      acceptTerms = true;
-      defaults.email = "hass@${sp.domain}";
     };
 
     networking.firewall.allowedTCPPorts = [ 80 443 ];
