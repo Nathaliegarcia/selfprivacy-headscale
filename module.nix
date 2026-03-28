@@ -6,7 +6,8 @@ let
 
   dataDir = "/var/lib/headscale";
 
-  hasAuth = sp ? passthru && sp.passthru ? auth;
+  auth-passthru = sp.passthru.auth or null;
+  hasAuth       = auth-passthru != null;
 
   oauthClientID = "headscale";
   adminsGroup   = "sp.headscale.admins";
@@ -70,8 +71,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-  {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = sp.domain != null && sp.domain != "";
@@ -137,31 +137,30 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts = [ 80 443 ];
-    networking.firewall.allowedUDPPorts = lib.mkIf cfg.enableDerp [ 3478 ];
-  }
-
-  (lib.optionalAttrs hasAuth {
-    services.headscale.settings.oidc = {
+    services.headscale.settings.oidc = lib.mkIf hasAuth {
       issuer                          = "https://auth.${sp.domain}/oauth2/openid/${oauthClientID}";
       client_id                       = oauthClientID;
-      client_secret_path              = sp.passthru.auth.mkOAuth2ClientSecretFP "headscale";
+      client_secret_path              = auth-passthru.mkOAuth2ClientSecretFP "headscale";
       only_start_if_oidc_is_available = false;
       allowed_groups                  = [ usersGroup adminsGroup ];
     };
 
-    selfprivacy.auth.clients.${oauthClientID} = {
-      inherit adminsGroup usersGroup;
-      imageFile     = ./icon.svg;
-      displayName   = "Headscale";
-      subdomain     = cfg.subdomain;
-      isTokenNeeded = false;
-      originUrl     = "https://${cfg.subdomain}.${sp.domain}/oidc/callback";
-      originLanding = "https://${cfg.subdomain}.${sp.domain}";
-      enablePkce    = true;
-      clientSystemdUnits = [ "headscale.service" ];
-      scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
+    selfprivacy.auth.clients = lib.mkIf hasAuth {
+      ${oauthClientID} = {
+        inherit adminsGroup usersGroup;
+        imageFile     = ./icon.svg;
+        displayName   = "Headscale";
+        subdomain     = cfg.subdomain;
+        isTokenNeeded = false;
+        originUrl     = "https://${cfg.subdomain}.${sp.domain}/oidc/callback";
+        originLanding = "https://${cfg.subdomain}.${sp.domain}";
+        enablePkce    = true;
+        clientSystemdUnits = [ "headscale.service" ];
+        scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
+      };
     };
-  })
-]);
+
+    networking.firewall.allowedTCPPorts = [ 80 443 ];
+    networking.firewall.allowedUDPPorts = lib.mkIf cfg.enableDerp [ 3478 ];
+  };
 }
