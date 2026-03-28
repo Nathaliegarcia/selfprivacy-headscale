@@ -120,7 +120,6 @@ in
           issuer                        = "https://auth.${sp.domain}/oauth2/openid/${oauthClientID}";
           client_id                     = oauthClientID;
           client_secret_path            = auth-passthru.mkOAuth2ClientSecretFP "headscale";
-          strip_email_domain            = true;
           only_start_if_oidc_is_available = false;
           allowed_groups                = [ usersGroup adminsGroup ];
         };
