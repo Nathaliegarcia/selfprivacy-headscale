@@ -5,6 +5,12 @@ let
   cfg = sp.modules.headscale;
 
   dataDir = "/var/lib/headscale";
+
+  auth-passthru = config.selfprivacy.passthru.auth;
+
+  oauthClientID = "headscale";
+  adminsGroup   = "sp.headscale.admins";
+  usersGroup    = "sp.headscale.users";
 in
 {
   options.selfprivacy.modules.headscale = {
@@ -109,6 +115,15 @@ in
             stun_listen_addr = "0.0.0.0:3478";
           };
         };
+
+        oidc = {
+          issuer                        = "https://auth.${sp.domain}/oauth2/openid/${oauthClientID}";
+          client_id                     = oauthClientID;
+          client_secret_path            = auth-passthru.mkOAuth2ClientSecretFP "headscale";
+          strip_email_domain            = true;
+          only_start_if_oidc_is_available = false;
+          allowed_groups                = [ usersGroup ];
+        };
       };
     };
 
@@ -128,6 +143,19 @@ in
           '';
         };
       };
+    };
+
+    selfprivacy.auth.clients.${oauthClientID} = {
+      inherit adminsGroup usersGroup;
+      imageFile     = ./icon.svg;
+      displayName   = "Headscale";
+      subdomain     = cfg.subdomain;
+      isTokenNeeded = false;
+      originUrl     = "https://${cfg.subdomain}.${sp.domain}/oidc/callback";
+      originLanding = "https://${cfg.subdomain}.${sp.domain}";
+      enablePkce    = true;
+      clientSystemdUnits = [ "headscale.service" ];
+      scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
     };
 
     networking.firewall.allowedTCPPorts = [ 80 443 ];
