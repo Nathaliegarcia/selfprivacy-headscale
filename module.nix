@@ -122,7 +122,7 @@ in
           client_secret_path            = auth-passthru.mkOAuth2ClientSecretFP "headscale";
           strip_email_domain            = true;
           only_start_if_oidc_is_available = false;
-          allowed_groups                = [ usersGroup ];
+          allowed_groups                = [ usersGroup adminsGroup ];
         };
       };
     };
