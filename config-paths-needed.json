@@ -1,5 +1,6 @@
 [
   ["selfprivacy", "domain"],
   ["selfprivacy", "useBinds"],
-  ["selfprivacy", "modules", "headscale"]
+  ["selfprivacy", "modules", "headscale"],
+  ["selfprivacy", "passthru", "auth"]
 ]
