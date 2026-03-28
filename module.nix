@@ -6,7 +6,7 @@ let
 
   dataDir = "/var/lib/headscale";
 
-  auth-passthru = config.selfprivacy.passthru.auth;
+  hasAuth = sp ? passthru && sp.passthru ? auth;
 
   oauthClientID = "headscale";
   adminsGroup   = "sp.headscale.admins";
@@ -70,7 +70,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+  {
     assertions = [
       {
         assertion = sp.domain != null && sp.domain != "";
@@ -115,14 +116,6 @@ in
             stun_listen_addr = "0.0.0.0:3478";
           };
         };
-
-        oidc = {
-          issuer                        = "https://auth.${sp.domain}/oauth2/openid/${oauthClientID}";
-          client_id                     = oauthClientID;
-          client_secret_path            = auth-passthru.mkOAuth2ClientSecretFP "headscale";
-          only_start_if_oidc_is_available = false;
-          allowed_groups                = [ usersGroup adminsGroup ];
-        };
       };
     };
 
@@ -144,6 +137,19 @@ in
       };
     };
 
+    networking.firewall.allowedTCPPorts = [ 80 443 ];
+    networking.firewall.allowedUDPPorts = lib.mkIf cfg.enableDerp [ 3478 ];
+  }
+
+  (lib.optionalAttrs hasAuth {
+    services.headscale.settings.oidc = {
+      issuer                          = "https://auth.${sp.domain}/oauth2/openid/${oauthClientID}";
+      client_id                       = oauthClientID;
+      client_secret_path              = sp.passthru.auth.mkOAuth2ClientSecretFP "headscale";
+      only_start_if_oidc_is_available = false;
+      allowed_groups                  = [ usersGroup adminsGroup ];
+    };
+
     selfprivacy.auth.clients.${oauthClientID} = {
       inherit adminsGroup usersGroup;
       imageFile     = ./icon.svg;
@@ -156,8 +162,6 @@ in
       clientSystemdUnits = [ "headscale.service" ];
       scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
     };
-
-    networking.firewall.allowedTCPPorts = [ 80 443 ];
-    networking.firewall.allowedUDPPorts = lib.mkIf cfg.enableDerp [ 3478 ];
-  };
+  })
+]);
 }
