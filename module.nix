@@ -154,7 +154,7 @@ in
         isTokenNeeded = false;
         originUrl     = "https://${cfg.subdomain}.${sp.domain}/oidc/callback";
         originLanding = "https://${cfg.subdomain}.${sp.domain}";
-        enablePkce    = true;
+        enablePkce    = false;
         clientSystemdUnits = [ "headscale.service" ];
         scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
       };
