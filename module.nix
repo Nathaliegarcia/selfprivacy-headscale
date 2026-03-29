@@ -143,6 +143,7 @@ in
       client_secret_path              = auth-passthru.mkOAuth2ClientSecretFP "headscale";
       only_start_if_oidc_is_available = false;
       allowed_groups                  = [ usersGroup adminsGroup ];
+      pkce.enabled                    = true;
     };
 
     selfprivacy.auth.clients = lib.mkIf hasAuth {
