@@ -157,7 +157,10 @@ in
         originLanding = "https://${cfg.subdomain}.${sp.domain}";
         enablePkce    = true;
         clientSystemdUnits = [ "headscale.service" ];
-        scopeMaps.${usersGroup} = [ "openid" "email" "profile" ];
+        scopeMaps = {
+          ${usersGroup}  = [ "openid" "email" "profile" ];
+          ${adminsGroup} = [ "openid" "email" "profile" ];
+        };
       };
     };
 
