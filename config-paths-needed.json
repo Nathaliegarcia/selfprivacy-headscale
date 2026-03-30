@@ -2,5 +2,6 @@
   ["selfprivacy", "domain"],
   ["selfprivacy", "useBinds"],
   ["selfprivacy", "modules", "headscale"],
-  ["selfprivacy", "passthru", "auth"]
+  ["selfprivacy", "modules", "auth", "enable"],
+  ["selfprivacy", "passthru", "auth", "mkOAuth2ClientSecretFP"]
 ]
