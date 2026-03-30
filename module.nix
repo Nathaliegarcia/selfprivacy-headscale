@@ -142,7 +142,6 @@ in
       client_id                       = oauthClientID;
       client_secret_path              = auth-passthru.mkOAuth2ClientSecretFP "headscale";
       only_start_if_oidc_is_available = false;
-      allowed_groups                  = [ usersGroup adminsGroup ];
       pkce.enabled                    = true;
     };
 
@@ -157,10 +156,6 @@ in
         originLanding = "https://${cfg.subdomain}.${sp.domain}";
         enablePkce    = true;
         clientSystemdUnits = [ "headscale.service" ];
-        scopeMaps = {
-          "${usersGroup}"  = [ "openid" "email" "profile" ];
-          "${adminsGroup}" = [ "openid" "email" "profile" ];
-        };
       };
     };
 
