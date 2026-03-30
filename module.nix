@@ -7,7 +7,7 @@ let
   dataDir = "/var/lib/headscale";
 
   auth-passthru = sp.passthru.auth or null;
-  hasAuth       = auth-passthru != null;
+  hasAuth       = sp.modules.auth.enable or false;
 
   oauthClientID = "headscale";
   adminsGroup   = "sp.headscale.admins";
@@ -157,10 +157,9 @@ in
         originLanding = "https://${cfg.subdomain}.${sp.domain}";
         enablePkce    = true;
         clientSystemdUnits = [ "headscale.service" ];
-        claimMaps.groups = {
-          joinType = "array";
-          valuesByGroup.${usersGroup}  = [ usersGroup ];
-          valuesByGroup.${adminsGroup} = [ adminsGroup ];
+        scopeMaps = {
+          "${usersGroup}"  = [ "openid" "email" "profile" ];
+          "${adminsGroup}" = [ "openid" "email" "profile" ];
         };
       };
     };
