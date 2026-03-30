@@ -7,7 +7,7 @@ let
   dataDir = "/var/lib/headscale";
 
   auth-passthru = sp.passthru.auth or null;
-  hasAuth       = sp.modules.auth.enable or false;
+  hasAuth       = sp.sso.enable or false;
 
   oauthClientID = "headscale";
   adminsGroup   = "sp.headscale.admins";
